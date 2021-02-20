@@ -7,6 +7,7 @@ var app = express();
 app.use(express.static(__dirname));
 app.use(session({secret: 'd9BgKuHWPOrH2WC5',saveUninitialized: true,resave: true, cookie: {  maxAge: 3*60*60*1000 }}));
 app.set('view engine', 'ejs');
+const PORT = process.env.PORT || 5000;
 // secure: true for https express-session
 
 var sess; // global session, NOT recommended
@@ -16,4 +17,4 @@ app.get('/',function(req,res){
 });
 
 
-app.listen(3000, function() { console.log('listening')});
+app.listen(PORT, function() { console.log('listening')});
