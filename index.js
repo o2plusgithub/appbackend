@@ -1,10 +1,19 @@
-const express = require('express')
-const path = require('path')
-const PORT = process.env.PORT || 5000
+var express = require('express');
+var bodyParser = require('body-parser');
+const session = require('express-session');
+var cors = require('cors'); // We will use CORS to enable cross origin domain requests.
+var urlencodedParser = bodyParser.urlencoded({ extended: false});
+var app = express();
+app.use(express.static(__dirname));
+app.use(session({secret: 'd9BgKuHWPOrH2WC5',saveUninitialized: true,resave: true, cookie: {  maxAge: 3*60*60*1000 }}));
+app.set('view engine', 'ejs');
+// secure: true for https express-session
 
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+var sess; // global session, NOT recommended
+
+app.get('/',function(req,res){
+  res.end("hello world");
+});
+
+
+app.listen(3000, function() { console.log('listening')});
