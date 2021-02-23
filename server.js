@@ -8,6 +8,7 @@ const pki = require('node-forge').pki;
 var jwt = require('jsonwebtoken');
 const request = require('request');
 const cryptoRandomString = require('crypto-random-string');
+var ejs = require('ejs');
 const PORT = process.env.PORT || 5000;
 const helmet = require('helmet');
 
@@ -117,7 +118,7 @@ app.post('/device_auth', urlencodedParser, function(req, res){
           if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 300000){
             // error 200 : No error 
 
-            var response_code = { status : true, reason: 200, redirect_url : "https://devicechecko2plus.herokuapp.com/"};
+            var response_code = { status : true, reason: 200, redirect_url : "https://expired.badssl.com"};
             console.log(response_code);
             res.send(JSON.stringify(response_code)); 
           } else {
