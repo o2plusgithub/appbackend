@@ -19,7 +19,7 @@ app.set('view engine', 'ejs');
 var sess; // global session, NOT recommended
 
 app.post('/check_update', urlencodedParser, function(req, res){
-  var version = 2;
+  var version = 1;
   if (parseInt(req.body.version) < version){
     var update_load = {update_status : true, update_url : "https://www.yahoo.com"};
     res.send(JSON.stringify(update_load));
