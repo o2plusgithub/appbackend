@@ -39,6 +39,11 @@ var current_version = 1;
 
 var sess; // global session, NOT recommended
 
+
+app.get('/',function(req,res){
+  res.render('website_status.ejs');
+});
+
 app.post('/check_update', urlencodedParser, function(req, res){
   var version = current_version;
   if (parseInt(req.body.version) < version){
