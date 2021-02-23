@@ -16,10 +16,14 @@ app.use(express.static(__dirname));
 app.use(session({secret: 'd9BgKuHWPOrH2WC5',saveUninitialized: true,resave: true, cookie: {  maxAge: 3*60*60*1000 }}));
 app.set('view engine', 'ejs');
 
+// update the version of app here 
+
+var current_version = 1;
+
 var sess; // global session, NOT recommended
 
 app.post('/check_update', urlencodedParser, function(req, res){
-  var version = 1;
+  var version = current_version;
   if (parseInt(req.body.version) < version){
     var update_load = {update_status : true, update_url : "https://www.yahoo.com"};
     res.send(JSON.stringify(update_load));
