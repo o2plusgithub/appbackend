@@ -47,7 +47,7 @@ app.get('/',function(req,res){
 app.post('/check_update', urlencodedParser, function(req, res){
   var version = current_version;
   if (parseInt(req.body.version) < version){
-    var update_load = {update_status : true, update_url : "https://www.yahoo.com"};
+    var update_load = {update_status : true, update_url : "https://devicechecko2plus.herokuapp.com/"};
     res.send(JSON.stringify(update_load));
   } else {
     var update_load = {update_status : false, update_url : ""};
