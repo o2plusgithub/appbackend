@@ -9,11 +9,28 @@ var jwt = require('jsonwebtoken');
 const request = require('request');
 const cryptoRandomString = require('crypto-random-string');
 const PORT = process.env.PORT || 5000;
+const helmet = require('helmet');
 
 var app = express();
-
+// OSC = O2Plus server cookie
+app.use(helmet());
 app.use(express.static(__dirname));
-app.use(session({secret: 'd9BgKuHWPOrH2WC5',saveUninitialized: true,resave: true, cookie: {  maxAge: 3*60*60*1000 }}));
+app.use(session(
+  {
+    secret: 'd9BgKuHWPOrH2WC5',
+    cookieName: "OSC", 
+    saveUninitialized: true,
+    resave: true, 
+    ephemeral: true,
+    cookie: { 
+      httpOnly: true,
+      secure: true,
+      sameSite: true,
+      maxAge: 3*60*60*1000 
+    }
+  }
+  )
+);
 app.set('view engine', 'ejs');
 
 // update the version of app here 
