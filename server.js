@@ -34,9 +34,15 @@ app.use(session(
   }
   )
 );
+
+app.use((req, res, next) => {
+	if (req.header('x-forwarded-proto') !== 'https' || !req.secure)
+		res.redirect(`https://${req.header('host')}${req.url}`)
+    else
+    	next()
+})
+
 app.set('view engine', 'ejs');
-
-
 // update the version of app here 
 
 var current_version = 1;
