@@ -17,7 +17,7 @@ var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
 app.use(helmet());
-app.use(enforce.HTTPS());
+app.use(enforce.HTTPS({trustProtoHeader: true}));
 app.use(express.static(__dirname));
 app.use(session(
   {
