@@ -11,7 +11,7 @@ const cryptoRandomString = require('crypto-random-string');
 var ejs = require('ejs');
 const PORT = process.env.PORT || 5000;
 const helmet = require('helmet');
-var securehttps = require('express-force-https');
+var secure = require('express-force-https');
 
 var app = express();
 // OSC = O2Plus server cookie
@@ -35,7 +35,7 @@ app.use(session(
   )
 );
 app.set('view engine', 'ejs');
-app.use(securehttps);
+
 
 // update the version of app here 
 
