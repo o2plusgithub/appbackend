@@ -37,14 +37,6 @@ app.use(session(
 
 app.set('view engine', 'ejs');
 
-app.use(function (req, res, next) {
-	if (req.headers['x-forwarded-proto'] !== 'https'){
-      return res.status(404).send('Not found');
-    } else {
-    next();
-    }
-})
-
 // update the version of app here 
 
 var current_version = 1;
