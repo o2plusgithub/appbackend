@@ -12,7 +12,6 @@ var ejs = require('ejs');
 const PORT = process.env.PORT || 5000;
 const helmet = require('helmet');
 
-
 var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
@@ -35,14 +34,13 @@ app.use(session(
   )
 );
 app.set('view engine', 'ejs');
-app.enable(‘trust proxy’);
-app.use(function (req, res, next) {
-	if (req.headers['x-forwarded-proto'] !== 'https'){
-      return res.status(404).render('website_error.ejs');
-    } else {
-    next();
-    }
-})
+//app.use(function (req, res, next) {
+//	if (req.headers['x-forwarded-proto'] !== 'https'){
+//      return res.status(404).render('website_error.ejs');
+//    } else {
+//    next();
+//    }
+//})
 // update the version of app here 
 
 var current_version = 1;
