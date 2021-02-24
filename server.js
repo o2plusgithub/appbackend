@@ -17,7 +17,6 @@ var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
 app.use(helmet());
-app.use(enforce.HTTPS({trustProtoHeader: true}));
 app.use(express.static(__dirname));
 app.use(session(
   {
@@ -35,16 +34,15 @@ app.use(session(
   }
   )
 );
-
 app.set('view engine', 'ejs');
 
-//app.use(function (req, res, next) {
-//	if (req.headers['x-forwarded-proto'] !== 'https'){
-//      return res.status(404).render('website_error.ejs');
-//    } else {
-//    next();
-//    }
-//})
+app.use(function (req, res, next) {
+	if (req.headers['x-forwarded-proto'] !== 'https'){
+      return res.status(404).render('website_error.ejs');
+    } else {
+    next();
+    }
+})
 // update the version of app here 
 
 var current_version = 1;
