@@ -35,14 +35,16 @@ app.use(session(
   )
 );
 
-app.use((req, res, next) => {
-	if (req.header('x-forwarded-proto') !== 'https')
-		res.redirect(`https://${req.header('host')}${req.url}`)
-    else
-    	next()
+app.set('view engine', 'ejs');
+
+app.use(function (req, res, next) {
+	if (req.headers['x-forwarded-proto'] !== 'https'){
+      return res.status(404).send('Not found');
+    } else {
+    next();
+    }
 })
 
-app.set('view engine', 'ejs');
 // update the version of app here 
 
 var current_version = 1;
@@ -148,6 +150,8 @@ app.post('/device_auth', urlencodedParser, function(req, res){
     }
   })
 })
+
+
 
 
 app.listen(PORT, function() { console.log('listening')});
