@@ -70,17 +70,11 @@ app.post('/token_load', urlencodedParser, function(req, res){
   var nonce = cryptoRandomString({length: 32, type: 'url-safe'});
   const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
   sess = req.session;
-  sess.app_version = app_version;
-  sess.fingerprint = fingerprint;
-  sess.webview_version = webview_version;
-  sess.unique_id = unique_id
-  sess.build_fingerprint = build_fingerprint;
-  sess.build_hardware = build_hardware;
   sess.nonce = nonce; 
   sess.api_key = api_key;
-  console.log(req.body);
   var token_load = {nonce : nonce, api_key : api_key};
   res.send(JSON.stringify(token_load));
+
 })
 
 app.post('/device_auth', urlencodedParser, function(req, res){
