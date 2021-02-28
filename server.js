@@ -57,9 +57,7 @@ app.post('/check_update', urlencodedParser, function(req, res){
   var version = current_version;
   if (parseInt(req.body.version) < version){
   	//add app link here 
-  	sess = req.session;
-  	sess.app_version = app_version;
-    var update_load = {update_status : true, update_url : "https://devicechecko2plus.herokuapp.com/"};
+    var update_load = {update_status : true, update_url : "https://devicechecko2plus.herokuapp.com/updateapk"};
     res.send(JSON.stringify(update_load));
   } else {
     var update_load = {update_status : false, update_url : ""};
@@ -71,12 +69,7 @@ app.post('/check_update', urlencodedParser, function(req, res){
 app.post('/token_load', urlencodedParser, function(req, res){
   var nonce = cryptoRandomString({length: 32, type: 'url-safe'});
   const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
-  
-  sess.fingerprint = fingerprint;
-  sess.webview_version = webview_version;
-  sess.unique_id = unique_id
-  sess.build_fingerprint = build_fingerprint;
-  sess.build_hardware = build_hardware;
+  sess = req.session;
   sess.nonce = nonce; 
   sess.api_key = api_key;
   var token_load = {nonce : nonce, api_key : api_key};
