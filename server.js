@@ -136,7 +136,7 @@ app.post('/device_auth', urlencodedParser, function(req, res){
             // error 200 : No error
 
             var redirect_token = cryptr.encrypt(JSON.stringify({timestamp : moment().format('x'), unique_id : sess.unique_id}));
-            var response_code = { status : true, reason: 200, redirect_url : "https://o2plususerinterface-server1.herokuapp.com?token="+ redirect_token};
+            var response_code = { status : true, reason: 200, redirect_url : "https://o2plususerinterface-server1.herokuapp.com/registration_page?token="+ redirect_token};
             console.log(response_code);
             res.send(JSON.stringify(response_code)); 
           } else {
