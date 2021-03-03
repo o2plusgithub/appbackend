@@ -17,21 +17,25 @@ var app = express();
 // helmet is needed for hsts => very important to block attacks 
 
 app.use(express.static(__dirname));
-app.use(session(
-  {
-    secret: 'd9BgKuHWPOrH2WC5',
-    cookieName: "OSC", 
+app.use(session({
+    secret: 'U5EAM0SCAD37CLjpLp7a',
+    cookieName: "OMWC",
     saveUninitialized: true,
-    resave: true, 
+    resave: true,
     ephemeral: true,
-    cookie: { 
-      httpOnly: true,
-      sameSite: true,
-      maxAge: 3*60*60*1000 
+    cookie: {
+        httpOnly: true,
+        sameSite: true,
+        maxAge: 3 * 60 * 60 * 1000
     }
-  }
-  )
+}));
+
+app.use(
+    helmet({
+        contentSecurityPolicy: false,
+    })
 );
+
 app.set('view engine', 'ejs');
 
 app.use(function (req, res, next) {
@@ -47,10 +51,7 @@ var current_version = 1;
 
 
 
-app.get('/sess',function(req,res){
-	var sess = req.session;
-  res.send(sess);
-});
+
 
 app.post('/check_update', urlencodedParser, function(req, res){
 	var sess = req.session;
