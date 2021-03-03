@@ -15,7 +15,7 @@ const helmet = require('helmet');
 var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
-app.use(helmet());
+
 app.use(express.static(__dirname));
 app.use(session(
   {
@@ -68,7 +68,7 @@ app.post('/check_update', urlencodedParser, function(req, res){
 })
 
 app.post('/token_load', urlencodedParser, function(req, res){
-	var sess = req.session;
+  var sess = req.session;
   var nonce = cryptoRandomString({length: 32, type: 'url-safe'});
   const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
   sess.fingerprint = req.body.fingerprint;
