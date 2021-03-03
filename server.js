@@ -21,12 +21,8 @@ app.use(session(
   {
     secret: 'd9BgKuHWPOrH2WC5',
     cookieName: "OSC", 
-    saveUninitialized: true,
     resave: true, 
-    ephemeral: true,
     cookie: { 
-      httpOnly: true,
-      sameSite: true,
       maxAge: 3*60*60*1000 
     }
   }
