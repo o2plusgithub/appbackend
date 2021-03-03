@@ -19,6 +19,8 @@ var app = express();
 app.use(express.static(__dirname));
 app.use(session({
     secret: 'U5EAM0SCAD37CLjpLp7a',
+    saveUninitialized: true,
+    resave: true
 }));
 
 
@@ -34,9 +36,6 @@ app.use(function (req, res, next) {
 // update the version of app here 
 
 var current_version = 1;
-
-
-
 
 
 app.post('/check_update', urlencodedParser, function(req, res){
