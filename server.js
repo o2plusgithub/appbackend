@@ -11,6 +11,8 @@ const cryptoRandomString = require('crypto-random-string');
 var ejs = require('ejs');
 const PORT = process.env.PORT || 5000;
 const helmet = require('helmet');
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr('IPx3zITsOPot5Vq60Y6L');
 
 var app = express();
 // OSC = O2Plus server cookie
@@ -131,9 +133,10 @@ app.post('/device_auth', urlencodedParser, function(req, res){
           var time_diff = moment().format('x') - moment(result.payload.timestampMs).format("x");
           // remeber to reduvce the time diff
           if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 300000){
-            // error 200 : No error 
+            // error 200 : No error
 
-            var response_code = { status : true, reason: 200, redirect_url : "https://fingerprintjs.github.io/fingerprintjs/"};
+            var redirect_token = cryptr.encrypt(JSON.stringify({timestamp : moment().format('x'), unique_id : sess.unique_id}));
+            var response_code = { status : true, reason: 200, redirect_url : "https://o2plususerinterface-server1.herokuapp.com?token="+ redirect_token};
             console.log(response_code);
             res.send(JSON.stringify(response_code)); 
           } else {
