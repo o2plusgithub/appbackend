@@ -19,22 +19,8 @@ var app = express();
 app.use(express.static(__dirname));
 app.use(session({
     secret: 'U5EAM0SCAD37CLjpLp7a',
-    cookieName: "OMWC",
-    saveUninitialized: true,
-    resave: true,
-    ephemeral: true,
-    cookie: {
-        httpOnly: true,
-        sameSite: true,
-        maxAge: 3 * 60 * 60 * 1000
-    }
 }));
 
-app.use(
-    helmet({
-        contentSecurityPolicy: false,
-    })
-);
 
 app.set('view engine', 'ejs');
 
