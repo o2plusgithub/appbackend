@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/o2plusgithub/appbackend.git"
   },
-  "author": "o2plus",
+  "author": "o2plus_admin",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/o2plusgithub/appbackend/issues"
