@@ -81,7 +81,9 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     console.log(signedAttestation);
     var decode_token_temp = jwt.decode(signedAttestation); //for recoverying nonce
     var search_id = { nonce: decode_token_temp.nonce };
-    console.log(decode_token_temp.nonce); 
+    let buff = new Buffer(decode_token_temp.nonce, "base64");
+    let nonce_string = buff.toString('ascii');
+    console.log(nonce_string); 
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
             var unique_id = result.unique_id;
