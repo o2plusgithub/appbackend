@@ -33,9 +33,6 @@ store.on('error', function(error) {
 
 app.use(session({
     secret: 'U5EAM0SCAD37CLjpLp7a',
-    cookieName: "OMWC",
-    saveUninitialized: true,
-    resave: true,
     store: store,
     cookie: {
         maxAge: 3 * 60 * 60 * 1000
