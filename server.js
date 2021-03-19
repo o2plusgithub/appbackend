@@ -59,6 +59,7 @@ app.get('/',function(req,res){
 
 app.post('/check_update', urlencodedParser, function(req, res){
   var version = current_version;
+  var sess = req.session;
   if (parseInt(req.body.version) < version){
     //add app link here 
     var update_load = {update_status : true, update_url : "https://devicechecko2plus.herokuapp.com/updateapk"};
