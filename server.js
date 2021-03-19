@@ -67,6 +67,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key };
     device_details_model.create(session_doc, function(err, result) {
         if (!err) {
+        	console.log(result)
             res.send(JSON.stringify(token_load))
         };
     })
@@ -80,6 +81,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     var decode_token_temp = jwt.decode(signedAttestation, { complete: true }); //for recoverying nonce
     device_details_model.find({ nonce: decode_token_temp.nonce }, function(err, result) {
         if (!err) {
+        	console.log(result)
             var unique_id = result.unique_id;
             var nonce = result.nonce;
             var api_key = result.api_key;
@@ -107,7 +109,9 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 .map(attr => ['"' + attr.name + '"', '"' + attr.value + '"'].join(':'))
                                 .join(', ');
                             jwt.verify(signedAttestation, token_certificate, { algorithms: ['RS256'] }, function(err, payload) {
+                                console.log(payload)
                                 if (err) {
+                                	console(err)
                                     var response_code = { signature: false, payload: null };
                                     resolve(response_code);
                                 } else {
