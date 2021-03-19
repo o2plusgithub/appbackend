@@ -44,6 +44,7 @@ app.use(session({
     cookieName: "OMWC",
     saveUninitialized: true,
     resave: true,
+    saveUninitialized: true,
     store: store,
     cookie: {
         maxAge: 3 * 60 * 60 * 1000
