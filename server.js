@@ -81,12 +81,14 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     var decode_token_temp = jwt.decode(signedAttestation); //for recoverying nonce
     var nonce_temp_buff = new Buffer(decode_token_temp.nonce, "base64");
     var nonce_temp_string = nonce_temp_buff.toString('ascii');
-    var search_id = { nonce: nonce_temp_string }; 
+    var search_id = { nonce: nonce_temp_string };
+    console.log(nonce_temp_string); 
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
             var unique_id = result.unique_id;
             var nonce = result.nonce;
             var api_key = result.api_key;
+            console.log(result);
             request.post({ url: 'https://www.googleapis.com/androidcheck/v1/attestations/verify?key=' + api_key, form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
                 if (err) {
                     console.log("token_server_fail");
