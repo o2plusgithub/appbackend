@@ -85,11 +85,10 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     var search_id = { nonce: nonce_string_temp };
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
-            var unique_id = result.unique_id;
-            var nonce = result.nonce;
-            var api_key = result.api_key;
-            console.log(result);
-            var jwt_url = "https://www.googleapis.com/androidcheck/v1/attestations/verify?key=" + 'AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8';
+            var unique_id = result[0].unique_id;
+            var nonce = result[0].nonce;
+            var api_key = result[0].api_key;
+            var jwt_url = "https://www.googleapis.com/androidcheck/v1/attestations/verify?key=" + api_key;
             request.post({ url: jwt_url , form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
             	console.log(JSON.parse(body));
                 if (err) {
