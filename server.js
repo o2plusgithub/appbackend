@@ -19,21 +19,28 @@ var app = express();
 // helmet is needed for hsts => very important to block attacks 
 app.use(helmet());
 app.use(express.static(__dirname));
-app.use(session(
-  {
-    secret: 'd9BgKuHWPOrH2WC5',
-    cookieName: "OSC", 
+var store = new MongoDBStore({
+    uri: 'mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/userSessions?retryWrites=true&w=majority',
+    collection: 'userSessions',
+    expires: 1000 * 60 * 60 * 24 * 30, // expire in mongo 4hrs
+});
+
+// Catch errors
+store.on('error', function(error) {
+    console.log('CANT CONNECT TO MongoDBStore !!!');
+    console.log(error);
+});
+
+app.use(session({
+    secret: 'U5EAM0SCAD37CLjpLp7a',
+    cookieName: "OMWC",
     saveUninitialized: true,
-    resave: true, 
-    ephemeral: true,
-    cookie: { 
-      httpOnly: true,
-      sameSite: true,
-      maxAge: 3*60*60*1000 
+    resave: true,
+    store: store,
+    cookie: {
+        maxAge: 3 * 60 * 60 * 1000
     }
-  }
-  )
-);
+}));
 app.set('view engine', 'ejs');
 
 app.use(function (req, res, next) {
