@@ -56,7 +56,7 @@ app.post('/check_update', urlencodedParser, function(req, res) {
 })
 
 app.post('/token_load', urlencodedParser, function(req, res) {
-    var nonce = cryptoRandomString({ length: 32, type: 'url-safe' });
+    var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
     const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
     var fingerprint = req.body.fingerprint;
     var webview_version = req.body.webview_version;
@@ -81,8 +81,6 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     console.log(signedAttestation);
     var decode_token_temp = jwt.decode(signedAttestation); //for recoverying nonce
     var search_id = { nonce: decode_token_temp.nonce };
-    let buff1 = new Buffer(decode_token_temp.nonce, "base64");
-    let nonce_string1 = buff1.toString('ascii');
     console.log(decode_token_temp.nonce); 
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
