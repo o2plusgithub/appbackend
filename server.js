@@ -14,8 +14,6 @@ const helmet = require('helmet');
 const Cryptr = require('cryptr');
 const cryptr = new Cryptr('IPx3zITsOPot5Vq60Y6L');
 var MongoDBStore = require('connect-mongodb-session')(session);
-
-
 var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
@@ -56,7 +54,6 @@ app.use(function (req, res, next) {
 
 var current_version = 1;
 
-var sess; // global session, NOT recommended
 
 
 app.get('/',function(req,res){
@@ -70,6 +67,7 @@ app.post('/check_update', urlencodedParser, function(req, res){
     var update_load = {update_status : true, update_url : "https://devicechecko2plus.herokuapp.com/updateapk"};
     res.send(JSON.stringify(update_load));
   } else {
+    sess = req.session;
     sess.version = req.body.version;
     var update_load = {update_status : false, update_url : ""};
     res.send(JSON.stringify(update_load));
@@ -80,6 +78,7 @@ app.post('/check_update', urlencodedParser, function(req, res){
 app.post('/token_load', urlencodedParser, function(req, res){
   var nonce = cryptoRandomString({length: 32, type: 'url-safe'});
   const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
+  sess = req.session;
   sess.fingerprint = req.body.fingerprint;
   sess.webview_version = req.body.webview_version;
   sess.unique_id = req.body.unique_id;
