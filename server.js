@@ -88,6 +88,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
             var unique_id = result.unique_id;
             var nonce = result.nonce;
             var api_key = result.api_key;
+            console.log(result)
             
             request.post({ url: 'https://www.googleapis.com/androidcheck/v1/attestations/verify?key=' + api_key, form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
 
