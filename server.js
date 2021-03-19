@@ -83,7 +83,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     var search_id = { nonce: decode_token_temp.nonce };
     let buff1 = new Buffer(decode_token_temp.nonce, "base64");
     let nonce_string1 = buff1.toString('ascii');
-    console.log(nonce_string1); 
+    console.log(decode_token_temp.nonce); 
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
             var unique_id = result.unique_id;
