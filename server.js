@@ -33,7 +33,7 @@ var device_details_server = new Schema({
     unique_id: String,
     nonce: String,
     api_key: String,
-    expire_at: {type: Date, default: Date.now, expires: 5} 
+    expire_at: {type: Date, default: Date.now, expires: 1} 
 }, {
     collection: 'device_details'
 });
