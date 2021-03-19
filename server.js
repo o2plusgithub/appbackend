@@ -88,12 +88,9 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
             var unique_id = result.unique_id;
             var nonce = result.nonce;
             var api_key = result.api_key;
-            console.log(result)
             
-            request.post({ url: 'https://www.googleapis.com/androidcheck/v1/attestations/verify?key=' + "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8", form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
-
+            request.post({ url: 'https://www.googleapis.com/androidcheck/v1/attestations/verify?key=' + result.api_key, form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
             	console.log(JSON.parse(body));
-            
                 if (err) {
                     console.log("token_server_fail");
                     // google server failed due to some reason
