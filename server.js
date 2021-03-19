@@ -58,6 +58,7 @@ app.post('/check_update', urlencodedParser, function(req, res) {
 app.post('/token_load', urlencodedParser, function(req, res) {
     var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
     const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
+    'AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8'
     var fingerprint = req.body.fingerprint;
     var webview_version = req.body.webview_version;
     var unique_id = req.body.unique_id;
@@ -88,8 +89,8 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
             var unique_id = result.unique_id;
             var nonce = result.nonce;
             var api_key = result.api_key;
-            
-            request.post({ url: 'https://www.googleapis.com/androidcheck/v1/attestations/verify?key=' + result.api_key, form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
+            var jwt_url = "https://www.googleapis.com/androidcheck/v1/attestations/verify?key=" + api_key;
+            request.post({ url: jwt_url , form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
             	console.log(JSON.parse(body));
                 if (err) {
                     console.log("token_server_fail");
