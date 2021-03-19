@@ -18,7 +18,6 @@ var Schema = mongoose.Schema;
 var MongoDBStore = require('connect-mongodb-session')(session);
 const expressip = require('express-ip');
 
-
 var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
@@ -44,15 +43,12 @@ app.use(session({
     secret: 'U5EAM0SCAD37CLjpLp7a',
     cookieName: "OMWC",
     saveUninitialized: true,
-    resave: false,
-    saveUninitialized: true
+    resave: true,
     store: store,
     cookie: {
         maxAge: 3 * 60 * 60 * 1000
     }
 }));
-
-
 app.use(expressip().getIpInfoMiddleware);
 
 app.use(function (req, res, next) {
