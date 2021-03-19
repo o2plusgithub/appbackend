@@ -27,10 +27,21 @@ app.use(
   })
 );
 
-app.use(express.static(__dirname));
+var store = new MongoDBStore({
+    uri: 'mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/userSessions?retryWrites=true&w=majority',
+    collection: 'userSessions',
+    expires: 1000 * 60 * 60 * 24 * 30, // expire in mongo 4hrs
+});
+
+// Catch errors
+store.on('error', function(error) {
+    console.log('CANT CONNECT TO MongoDBStore !!!');
+    console.log(error);
+});
+
 app.use(session({
-    secret: 'd9BgKuHWPOrH2WC5a',
-    cookieName: "OSC",
+    secret: 'U5EAM0SCAD37CLjpLp7a',
+    cookieName: "OMWC",
     saveUninitialized: true,
     resave: true,
     store: store,
@@ -38,6 +49,8 @@ app.use(session({
         maxAge: 3 * 60 * 60 * 1000
     }
 }));
+
+
 app.use(expressip().getIpInfoMiddleware);
 
 app.use(function (req, res, next) {
