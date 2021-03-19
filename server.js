@@ -79,6 +79,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     //const api_key = "AIzaSyAorkPG4QrJ8S0HPYM9rpdktglqO5UHzM8";
     var signedAttestation = req.body.signedAttestation;
     var decode_token_temp = jwt.decode(signedAttestation); //for recoverying nonce
+    console.log(decode_token_temp.nonce);
     device_details_model.find({ nonce: decode_token_temp.nonce }, function(err, result) {
         if (!err) {
         	console.log(result)
