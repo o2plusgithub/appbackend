@@ -79,12 +79,11 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     //const api_key = "AIzaSyAorkPG4QrJ8S0HPYM9rpdktglqO5UHzM8";
     var signedAttestation = req.body.signedAttestation;
     var decode_token_temp = jwt.decode(signedAttestation); //for recoverying nonce
-    console.log(decode_token_temp.nonce);
-    var search_id = { nonce: decode_token_temp.nonce }; 
-    console.log(search_id);
+    var nonce_temp_buff = new Buffer(decode_token_temp.nonce, "base64");
+    var nonce_temp_string = nonce_temp_buff.toString('ascii');
+    var search_id = { nonce: nonce_temp_string }; 
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
-        	console.log(result)
             var unique_id = result.unique_id;
             var nonce = result.nonce;
             var api_key = result.api_key;
