@@ -12,6 +12,8 @@ const PORT = process.env.PORT || 5000;
 const helmet = require('helmet');
 const Cryptr = require('cryptr');
 const cryptr = new Cryptr('IPx3zITsOPot5Vq60Y6L');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 var app = express();
 // OSC = O2Plus server cookie
