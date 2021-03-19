@@ -13,35 +13,31 @@ const PORT = process.env.PORT || 5000;
 const helmet = require('helmet');
 const Cryptr = require('cryptr');
 const cryptr = new Cryptr('IPx3zITsOPot5Vq60Y6L');
-var MongoDBStore = require('connect-mongodb-session')(session);
+
 var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
 app.use(helmet());
 app.use(express.static(__dirname));
-var store = new MongoDBStore({
-    uri: 'mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/userSessions?retryWrites=true&w=majority',
-    collection: 'userSessions',
-    expires: 1000 * 60 * 60 * 24 * 30, // expire in mongo 4hrs
-});
-
-// Catch errors
-store.on('error', function(error) {
-    console.log('CANT CONNECT TO MongoDBStore !!!');
-    console.log(error);
-});
-
-app.use(session({
-    secret: 'U5EAM0SCAD37CLjpLp7a',
-    store: store,
-    cookie: {
-        maxAge: 3 * 60 * 60 * 1000
+app.use(session(
+  {
+    secret: 'd9BgKuHWPOrH2WC5',
+    cookieName: "OSC", 
+    saveUninitialized: true,
+    resave: true, 
+    ephemeral: true,
+    cookie: { 
+      httpOnly: true,
+      sameSite: true,
+      maxAge: 3*60*60*1000 
     }
-}));
+  }
+  )
+);
 app.set('view engine', 'ejs');
 
 app.use(function (req, res, next) {
-  if (req.headers['x-forwarded-proto'] !== 'https'){
+	if (req.headers['x-forwarded-proto'] !== 'https'){
       return res.status(404).render('website_error.ejs');
     } else {
     next();
@@ -51,19 +47,22 @@ app.use(function (req, res, next) {
 
 var current_version = 1;
 
+var sess; // global session, NOT recommended
+
+
 app.get('/',function(req,res){
   res.render('website_status.ejs');
 });
 
 app.post('/check_update', urlencodedParser, function(req, res){
-  sess = req.session;
   var version = current_version;
   if (parseInt(req.body.version) < version){
-    //add app link here 
+  	//add app link here 
     var update_load = {update_status : true, update_url : "https://devicechecko2plus.herokuapp.com/updateapk"};
     res.send(JSON.stringify(update_load));
   } else {
-    sess.version = req.body.version;
+  	sess = req.session;
+  	sess.version = req.body.version;
     var update_load = {update_status : false, update_url : ""};
     res.send(JSON.stringify(update_load));
   }
@@ -73,6 +72,7 @@ app.post('/check_update', urlencodedParser, function(req, res){
 app.post('/token_load', urlencodedParser, function(req, res){
   var nonce = cryptoRandomString({length: 32, type: 'url-safe'});
   const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
+  sess = req.session;
   sess.fingerprint = req.body.fingerprint;
   sess.webview_version = req.body.webview_version;
   sess.unique_id = req.body.unique_id;
