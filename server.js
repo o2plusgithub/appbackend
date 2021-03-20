@@ -33,7 +33,7 @@ var device_details_server = new Schema({
     unique_id: String,
     nonce: String,
     api_key: String,
-    expire_at: {type: Date, default: Date.now, expires: 3} 
+    expire_at: {type: Date, default: Date.now, expires: 3, partialFilterExpression: { api_key : "jhfjg" }},
 }, {
     collection: 'device_details'
 });
