@@ -53,15 +53,11 @@ var device_details_server = new Schema({
 	build_model: String, 
 	build_manufacturer: String, 
     nonce: String,
-    api_key: String,
-  	expireAt: {
-       type: Date,
-       default: Date.now,
-       expires: 180
-     }
+    api_key: String
 }, {
     collection: 'device_details'
 });
+
 
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var device_details_model = connect.model('device_details_model', device_details_server);
@@ -74,12 +70,7 @@ var device_server_log_details_server = new Schema({
 	build_manufacturer: String, 
     api_key: String,
     log_report: String,
-    solution: String,
-  	expireAt: {
-       type: Date,
-       default: Date.now,
-       expires: 180
-     }
+    solution: String
 }, {
     collection: 'device_server_log_details'
 });
