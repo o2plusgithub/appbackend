@@ -33,11 +33,10 @@ var device_details_server = new Schema({
     unique_id: String,
     nonce: String,
     api_key: String,
-    expire_at: {type: Date, default: Date.now, expires: 3, partialFilterExpression: { api_key : true }},
 }, {
     collection: 'device_details'
 });
-
+device_details_server.index({ expireAfterSeconds: 180, partialFilterExpression: { api_key: "test" }})
 //    expire_at: {type: Date, default: Date.now, expires: 3},
 //    partialFilterExpression: { api_key : String }
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
