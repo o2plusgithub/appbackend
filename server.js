@@ -67,7 +67,7 @@ var device_server_log_details_server = new Schema({
 	build_manufacturer: String, 
     api_key: String,
     log_report: String,
-    solution: String
+    solution: String,
     expire_at: {type: Date, default: Date.now, expires: 60}
 }, {
     collection: 'device_server_log_details'
