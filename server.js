@@ -33,7 +33,7 @@ var device_details_server = new Schema({
     unique_id: String,
     nonce: String,
     api_key: String,
-    expire_at: {type: Date, default: Date.now, expires: 1} 
+    expire_at: {type: Date, default: Date.now, expires: 3} 
 }, {
     collection: 'device_details'
 });
@@ -68,7 +68,6 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key };
     device_details_model.create(session_doc, function(err, result) {
         if (!err) {
-        	console.log(result)
             res.send(JSON.stringify(token_load))
         };
     })
@@ -90,9 +89,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
             var api_key = result[0].api_key;
             var jwt_url = "https://www.googleapis.com/androidcheck/v1/attestations/verify?key=" + api_key;
             request.post({ url: jwt_url , form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
-            	console.log(JSON.parse(body));
                 if (err) {
-                    console.log("token_server_fail");
                     // google server failed due to some reason
                     var response_code = { status: false, reason: 583, redirect_url: "about:blank" };
                     res.send(JSON.stringify(response_code));
@@ -114,7 +111,6 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 .map(attr => ['"' + attr.name + '"', '"' + attr.value + '"'].join(':'))
                                 .join(', ');
                             jwt.verify(signedAttestation, token_certificate, { algorithms: ['RS256'] }, function(err, payload) {
-                                console.log(payload)
                                 if (err) {
                                 	console(err)
                                     var response_code = { signature: false, payload: null };
@@ -133,25 +129,20 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                             // remeber to reduvce the time diff
                             if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 300000) {
                                 // error 200 : No error
-
                                 var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id }));
                                 var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server1.herokuapp.com/login_page?token=" + redirect_token };
-                                console.log(response_code);
                                 res.send(JSON.stringify(response_code));
                             } else {
 
                                 // error 249 : signature failed because of app tampering 
                                 var response_code = { status: false, reason: 249, redirect_url: "about:blank" };
-                                console.log(response_code);
                                 res.send(JSON.stringify(response_code));
                             }
                         });
                     } else {
                         // error 803 : google rejected the signature 
                         var response_code = { status: false, reason: 803, redirect_url: "about:blank" };
-
                         res.send(JSON.stringify(response_code));
-                        console.log("token_decode_failed");
                     }
                 }
             })
