@@ -32,7 +32,11 @@ app.use(function(req, res, next) {
 var device_details_server = new Schema({
     unique_id: String,
     nonce: String,
-    api_key: String,
+    api_key: {
+    	type:String,
+    	default:'test',
+    	index:true
+    }
 }, {
     collection: 'device_details'
 });
