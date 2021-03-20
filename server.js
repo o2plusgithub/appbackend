@@ -20,6 +20,15 @@ const expressip = require('express-ip');
 var current_version = 1;
 var server_mode = true; // true for online and false for offline or maintainance
 
+// server selection script
+var server_max = 1;
+var random_server = Math.floor(Math.random() * (server_max - 1) + 1);
+// safetynet api selection script
+var safetynet_api_array = ["AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8"];
+var safetynet_api_max = 1;
+var safetynet_random_api = Math.floor(Math.random() * (safetynet_api_max - 1) + 1);
+var safetynet_api = safetynet_api_array[safetynet_random_api];
+
 
 if (process.env.NODE_ENV === "production") {
 	console.log("server is in production mode")
@@ -144,7 +153,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     		var user_state = ip_data.region;
     		var user_proxy = ip_data.proxy;
     		var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
-    		const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
+    		const api_key = safetynet_api;
     		var fingerprint = req.body.fingerprint;
     		var webview_version = req.body.webview_version;
     		var unique_id = req.body.unique_id;
@@ -223,17 +232,14 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                             let buff = Buffer.from(result.payload.nonce, "base64");
                             let nonce_string = buff.toString('ascii');
                             var time_diff = moment().format('x') - moment(result.payload.timestampMs).format("x");
-                            // remeber to reduvce the time diff
+                            // remeber to reduvce the time diff = 3 min
                             if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 180000) {
                                 // error 200 : No error
-                                var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id }));
+                                var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id, user_ip : user_ip }));
                                 user_details_model.countDocuments({unique_id: unique_id }, function(err, result){
-                                	var max = 1;
-                                	var random_server = Math.floor(Math.random() * (max - 1) + 1)
                                 	if (result == 0){
                                 		// error 200 : No error and registration
                                 		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and registration', solution : ' '}
-                                		console.log(user_log);
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
                                 				var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/registration_page?token=" + redirect_token };
