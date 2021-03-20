@@ -122,7 +122,8 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
         if (!err) {
             var unique_id = result[0].unique_id;
             var nonce = result[0].nonce;
-            var api_key = result[0].api_key;
+            //var api_key = result[0].api_key;
+            var api_key = 'qwertyuiop'
             var jwt_url = "https://www.googleapis.com/androidcheck/v1/attestations/verify?key=" + api_key;
             request.post({ url: jwt_url , form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
                 if (err) {
