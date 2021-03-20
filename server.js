@@ -40,6 +40,27 @@ var device_details_server = new Schema({
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
 var device_details_model = connect.model('device_details_model', device_details_server);
 
+var user_details_server = new Schema({
+    username: String,
+    password: String,
+    branch: String,
+    phonenumber: Number,
+    phoneverified: Boolean,
+    unique_id: String,
+    userblocked: Boolean,
+    video_watch_hour: Number,
+    logincount: Number,
+    lec_quality: String,
+    like: { type: [String], default: undefined },
+    dislike: { type: [String], default: undefined },
+    points: Number,
+    rank: Number
+}, {
+    collection: 'user_details'
+});
+
+var connect1 = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/userdetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
+var user_details_model = connect1.model('user_details_model', user_details_server);
 
 
 var current_version = 1;
@@ -130,8 +151,20 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                             if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 300000) {
                                 // error 200 : No error
                                 var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id }));
-                                var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server1.herokuapp.com/login_page?token=" + redirect_token };
-                                res.send(JSON.stringify(response_code));
+                                user_details_model.count({unique_id: unique_id }, function(err, result){
+                                	if (result == 0){
+                                		// error 200 : No error
+                                		var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server1.herokuapp.com/registration_page?token=" + redirect_token };
+                                		res.send(JSON.stringify(response_code));
+                                	} else if (result == 1){
+                                		var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server1.herokuapp.com/login_page?token=" + redirect_token };
+                                		res.send(JSON.stringify(response_code));
+                                	} else {
+                                		// error 273 : multiple unique ids founds. need to purge
+                                		var response_code = { status: false, reason: 273, redirect_url: "about:blank" };
+                        				res.send(JSON.stringify(response_code));
+                                	}
+                                })
                             } else {
 
                                 // error 249 : signature failed because of app tampering 
