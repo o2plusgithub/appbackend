@@ -33,11 +33,11 @@ var device_details_server = new Schema({
     unique_id: String,
     nonce: String,
     api_key: String,
-    expire_at: {type: Date, default: Date.now, expires: 3},
-    partialFilterExpression: { api_key : String }
 }, {
     collection: 'device_details'
 });
+//    expire_at: {type: Date, default: Date.now, expires: 3},
+//    partialFilterExpression: { api_key : String }
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
 var device_details_model = connect.model('device_details_model', device_details_server);
 
@@ -87,12 +87,14 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var build_fingerprint = req.body.build_fingerprint;
     var build_hardware = req.body.build_hardware;
     var token_load = { nonce: nonce, api_key: api_key };
-    var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key, partialFilterExpression: { api_key : "1234" } };
-    device_details_model.create(session_doc, function(err, result) {
-        if (!err) {
-            res.send(JSON.stringify(token_load))
-        };
-    })
+    var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key};
+    device_details_model.createIndex({ creationDate: 1 }, { expireAfterSeconds: 180, partialFilterExpression: { api_key: 'test' }}, function(err, result){
+    	device_details_model.create(session_doc, function(err, result) {
+    		if (!err) {
+    			res.send(JSON.stringify(token_load))
+    		}
+    	})
+    });
 })
 
 app.post('/device_auth', urlencodedParser, function(req, res) {
