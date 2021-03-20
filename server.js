@@ -27,7 +27,7 @@ var random_server = Math.floor(Math.random() * (server_max - 1) + 1);
 var safetynet_api_array = ["AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8"];
 var safetynet_api_max = 1;
 var safetynet_random_api = Math.floor(Math.random() * (safetynet_api_max - 1) + 1);
-var safetynet_api = safetynet_api_array[safetynet_random_api];
+var safetynet_api = safetynet_api_array[0];
 
 
 if (process.env.NODE_ENV === "production") {
