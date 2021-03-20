@@ -34,7 +34,7 @@ var device_details_server = new Schema({
     nonce: String,
     api_key: String,
     expire_at: {type: Date, default: Date.now, expires: 3},
-    partialFilterExpression: { api_key : 'jhfjg' }
+    partialFilterExpression: { api_key : String }
 }, {
     collection: 'device_details'
 });
@@ -87,7 +87,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var build_fingerprint = req.body.build_fingerprint;
     var build_hardware = req.body.build_hardware;
     var token_load = { nonce: nonce, api_key: api_key };
-    var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key };
+    var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key, partialFilterExpression: { api_key : api_key } };
     device_details_model.create(session_doc, function(err, result) {
         if (!err) {
             res.send(JSON.stringify(token_load))
