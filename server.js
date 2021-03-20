@@ -19,6 +19,13 @@ var Schema = mongoose.Schema;
 var current_version = 1;
 var server_mode = true; // true for online and false for offline or maintainance
 
+
+if (process.env.NODE_ENV === "production") {
+	console.log("server is in production mode")
+} else {
+	console.log("server is not in production mode");
+}
+
 var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
