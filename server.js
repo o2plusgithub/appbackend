@@ -82,7 +82,7 @@ var device_server_log_details_server = new Schema({
     expireAt: {
     	type: Date,
       	/* Defaults 7 days from now */
-   		default: new Date(new Date().valueOf() + 600000),
+   		default: new Date(new Date().valueOf() + 3600000),
       	/* Remove doc 60 seconds after specified date */
       	expires: 60
     }
