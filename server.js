@@ -209,12 +209,23 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 	var random_server = Math.floor(Math.random() * (max - 1) + 1)
                                 	if (result == 0){
                                 		// error 200 : No error and registration
-                                		var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server"+ random_server +".herokuapp.com/registration_page?token=" + redirect_token };
-                                		res.send(JSON.stringify(response_code));
+                                		user_log ={user_ip : user_ip, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and registration', solution : ' '}
+                                		console.log(user_log);
+                                		device_server_log_details_model.create(user_log, function(err, result) {
+                                			if(!err){
+                                				var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/registration_page?token=" + redirect_token };
+                                				res.send(JSON.stringify(response_code));
+                                			}
+                                		})                                		
                                 	} else if (result == 1){
                                 		// error 200 : No error and login
-                                		var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/login_page?token=" + redirect_token };
-                                		res.send(JSON.stringify(response_code));
+                                		user_log ={user_ip : user_ip, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and login', solution : ' '}
+                                		device_server_log_details_model.create(user_log, function(err, result) {
+                                			if(!err){
+                                				var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/login_page?token=" + redirect_token };
+                                				res.send(JSON.stringify(response_code));
+                                			}
+                                		})
                                 	} else {
                                 		// error 273 : multiple unique ids founds. need to purge
                                 		user_log ={user_ip : user_ip, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 273 : multiple unique ids founds. need to purge', solution : 'Multiple unique ids founds. Maybe because someones phone shows unqiue id as null. Need to purge those users and study the issue'}
