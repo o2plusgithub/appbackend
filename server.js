@@ -72,6 +72,8 @@ var device_details_model = connect.model('device_details_model', device_details_
 
 var device_server_log_details_server = new Schema({
 	user_ip : String,
+	user_city : String,
+	user_state : String,
 	unique_id: String,
 	build_product : String, 
 	build_model: String, 
@@ -132,37 +134,34 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var user_ip_info = req.ipInfo;
     console.log(user_ip_info)
     var user_ip = user_ip_info.ip;
-    var user_country = user_ip_info.country;
-    request({url: 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://proxycheck.io/v2/' + user_ip + '?vpn=1&asn=1'),json: true}, function (error, response, body) {
+    request('https://api.allorigins.win/get?url=' + encodeURIComponent('https://proxycheck.io/v2/' + user_ip + '?vpn=1&asn=1'), function (error, response, body) {
     	if (!error && response.statusCode === 200) {
-    		console.log(JSON.parse(body));
+    		var ip_data = JSON.parse(JSON.parse(body).contents)[user_ip];
+    		var user_country = ip_data.isocode;
+    		var user_city = ip_data.city;
+    		var user_state = ip_data.region;
+    		var user_proxy = ip_data.proxy;
+    		var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
+    		const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
+    		var fingerprint = req.body.fingerprint;
+    		var webview_version = req.body.webview_version;
+    		var unique_id = req.body.unique_id;
+    		var build_fingerprint = req.body.build_fingerprint;
+    		var build_hardware = req.body.build_hardware;
+    		var build_hardware_array = build_hardware.split(":");
+    		var build_product = build_hardware_array[0];
+    		var build_model = build_hardware_array[1];
+    		var build_manufacturer = build_hardware_array[2];
+    		var vpn_status = ip_data.proxy != 'no';
+    		var token_load = { server_status: server_mode, vpn_status : vpn_status, nonce: nonce, api_key: api_key };
+    		var session_doc = {user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id: unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , nonce: nonce, api_key: api_key};
+    		device_details_model.create(session_doc, function(err, result) {
+    			if (!err) {
+    				res.send(JSON.stringify(token_load))
+    			}
+    		})
 		}
 	})
-
-
-    var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
-    const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
-    var fingerprint = req.body.fingerprint;
-    var webview_version = req.body.webview_version;
-    var unique_id = req.body.unique_id;
-    var build_fingerprint = req.body.build_fingerprint;
-    var build_hardware = req.body.build_hardware;
-    var build_hardware_array = build_hardware.split(":");
-    var build_product = build_hardware_array[0];
-    var build_model = build_hardware_array[1];
-    var build_manufacturer = build_hardware_array[2];
-    var vpn_status = user_ip_info.country != "IN";
-    var token_load = { server_status: server_mode, vpn_status : vpn_status, nonce: nonce, api_key: api_key };
-    var session_doc = {user_ip : user_ip, unique_id: unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , nonce: nonce, api_key: api_key};
-    
-    console.log(session_doc)
-    console.log(token_load)
-
-    device_details_model.create(session_doc, function(err, result) {
-    	if (!err) {
-    		res.send(JSON.stringify(token_load))
-    	}
-    })
 })
 
 app.post('/device_auth', urlencodedParser, function(req, res) {
