@@ -88,13 +88,12 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var build_hardware = req.body.build_hardware;
     var token_load = { nonce: nonce, api_key: api_key };
     var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key};
-    device_details_model.createIndex({ creationDate: 1 }, { expireAfterSeconds: 180, partialFilterExpression: { api_key: 'test' }}, function(err, result){
     	device_details_model.create(session_doc, function(err, result) {
     		if (!err) {
+    			    device_details_model.createIndex({ creationDate: 1 }, { expireAfterSeconds: 180, partialFilterExpression: { api_key: 'test' }})
     			res.send(JSON.stringify(token_load))
     		}
     	})
-    });
 })
 
 app.post('/device_auth', urlencodedParser, function(req, res) {
