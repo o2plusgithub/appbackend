@@ -15,6 +15,11 @@ const cryptr = new Cryptr('IPx3zITsOPot5Vq60Y6L');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+
+// app version change here 
+var current_version = 1;
+var server_mode = true; // true for online and false for offline or maintainance
+
 var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
@@ -64,7 +69,6 @@ var connect1 = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc
 var user_details_model = connect1.model('user_details_model', user_details_server);
 
 
-var current_version = 1;
 
 app.post('/check_update', urlencodedParser, function(req, res) {
     var version = current_version;
@@ -86,13 +90,13 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var unique_id = req.body.unique_id;
     var build_fingerprint = req.body.build_fingerprint;
     var build_hardware = req.body.build_hardware;
-    var token_load = { nonce: nonce, api_key: api_key };
+    var token_load = { server_status: server_mode, nonce: nonce, api_key: api_key };
     var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key};
-    	device_details_model.create(session_doc, function(err, result) {
-    		if (!err) {
-    			res.send(JSON.stringify(token_load))
-    		}
-    	})
+    device_details_model.create(session_doc, function(err, result) {
+    	if (!err) {
+    		res.send(JSON.stringify(token_load))
+    	}
+    })
 })
 
 app.post('/device_auth', urlencodedParser, function(req, res) {
@@ -154,10 +158,11 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id }));
                                 user_details_model.count({unique_id: unique_id }, function(err, result){
                                 	if (result == 0){
-                                		// error 200 : No error
+                                		// error 200 : No error and registration
                                 		var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server1.herokuapp.com/registration_page?token=" + redirect_token };
                                 		res.send(JSON.stringify(response_code));
                                 	} else if (result == 1){
+                                		// error 200 : No error and login
                                 		var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server1.herokuapp.com/login_page?token=" + redirect_token };
                                 		res.send(JSON.stringify(response_code));
                                 	} else {
