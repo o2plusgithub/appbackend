@@ -36,6 +36,7 @@ var device_details_server = new Schema({
 }, {
     collection: 'device_details'
 });
+device_details_server.index({ creationDate: 1 }, { expireAfterSeconds: 180, partialFilterExpression: { api_key: 'test' }})
 //    expire_at: {type: Date, default: Date.now, expires: 3},
 //    partialFilterExpression: { api_key : String }
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
@@ -90,7 +91,6 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key};
     	device_details_model.create(session_doc, function(err, result) {
     		if (!err) {
-    			device_details_model.index({ creationDate: 1 }, { expireAfterSeconds: 180, partialFilterExpression: { api_key: 'test' }})
     			res.send(JSON.stringify(token_load))
     		}
     	})
