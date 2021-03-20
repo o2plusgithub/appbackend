@@ -114,6 +114,7 @@ app.post('/check_update', urlencodedParser, function(req, res) {
 
 app.post('/token_load', urlencodedParser, function(req, res) {
     var user_ip_info = req.ipInfo;
+    console.log(user_ip_info)
     var user_ip = user_ip_info.ip;
     var user_country = user_ip_info.country;
     var user_city = user_ip_info.city;
@@ -128,7 +129,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var build_product = build_hardware_array[0];
     var build_model = build_hardware_array[1];
     var build_manufacturer = build_hardware_array[2];
-    var vpn_status = user_ip_info.country == "IN";
+    var vpn_status = user_ip_info.country != "IN";
     var token_load = { server_status: server_mode, vpn_status : vpn_status, nonce: nonce, api_key: api_key };
     var session_doc = {user_ip : user_ip, user_city : user_city, unique_id: unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , nonce: nonce, api_key: api_key};
     
