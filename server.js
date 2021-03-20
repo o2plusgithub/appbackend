@@ -47,7 +47,11 @@ app.use(function(req, res, next) {
 // update the version of app here 
 
 var device_details_server = new Schema({
-    unique_id: String,
+	user_ip : String,
+	unique_id: String,
+	build_product : String, 
+	build_model: String, 
+	build_manufacturer: String, 
     nonce: String,
     api_key: String,
     expire_at: {type: Date, default: Date.now, expires: 3}
