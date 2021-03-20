@@ -154,6 +154,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     		var user_proxy = ip_data.proxy;
     		var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
     		const api_key = safetynet_api;
+    		console.log(api_key);
     		var fingerprint = req.body.fingerprint;
     		var webview_version = req.body.webview_version;
     		var unique_id = req.body.unique_id;
