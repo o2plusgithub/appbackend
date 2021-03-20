@@ -57,7 +57,8 @@ var device_details_server = new Schema({
     expireAt: {
     	type: Date,
       	/* Defaults 7 days from now */
-   		default: new Date(new Date().valueOf() + 604800000),
+      	// 604800000
+   		default: new Date(new Date().valueOf() + 0),
       	/* Remove doc 60 seconds after specified date */
       	expires: 60
     }
@@ -82,9 +83,10 @@ var device_server_log_details_server = new Schema({
     expireAt: {
     	type: Date,
       	/* Defaults 7 days from now */
-   		default: new Date(new Date().valueOf() + 604800000),
+      	// 604800000
+   		default: new Date(new Date().valueOf() + 0),
       	/* Remove doc 60 seconds after specified date */
-      	expires: 60
+      	expires: 600
     }
 }, {
     collection: 'device_server_log_details'
