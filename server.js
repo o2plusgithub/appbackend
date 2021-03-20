@@ -54,7 +54,8 @@ var device_details_server = new Schema({
 	build_manufacturer: String, 
     nonce: String,
     api_key: String,
-    expire_at: {type: Date, default: Date.now, expires: 60}
+  	createdAt: {type: Date, default: Date.now },
+  	expire_at: {type: Date, default: Date.now, expires: 86400},
 }, {
     collection: 'device_details'
 });
@@ -71,7 +72,8 @@ var device_server_log_details_server = new Schema({
     api_key: String,
     log_report: String,
     solution: String,
-    expire_at: {type: Date, default: Date.now, expires: 60}
+  	createdAt: {type: Date, default: Date.now },
+  	expire_at: {type: Date, default: Date.now, expires: 86400},
 }, {
     collection: 'device_server_log_details'
 });
@@ -100,7 +102,6 @@ var user_details_server = new Schema({
 
 var connect1 = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/userdetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var user_details_model = connect1.model('user_details_model', user_details_server);
-
 
 
 app.post('/check_update', urlencodedParser, function(req, res) {
