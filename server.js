@@ -59,8 +59,8 @@ var device_details_server = new Schema({
       	/* Defaults 7 days from now */
       	// 604800000
    		default: new Date(new Date().valueOf() + 0),
-      	/* Remove doc 60 seconds after specified date */
-      	expires: 60
+      	/* Remove doc 600 seconds after specified date */
+      	expires: 600
     }
 }, {
     collection: 'device_details'
@@ -85,7 +85,7 @@ var device_server_log_details_server = new Schema({
       	/* Defaults 7 days from now */
       	// 604800000
    		default: new Date(new Date().valueOf() + 0),
-      	/* Remove doc 60 seconds after specified date */
+      	/* Remove doc 600 seconds after specified date */
       	expires: 600
     }
 }, {
