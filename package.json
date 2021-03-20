@@ -23,7 +23,6 @@
     "express": "^4.17.1",
     "express-ip": "^1.0.4",
     "helmet": "^4.4.1",
-    "ipinfo": "^1.5.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "mongoose": "^5.12.1",
