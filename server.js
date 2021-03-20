@@ -32,16 +32,12 @@ app.use(function(req, res, next) {
 var device_details_server = new Schema({
     unique_id: String,
     nonce: String,
-    api_key: {
-    	type:String,
-    	default:'test',
-    	index:true
-    }
+    api_key: String,
 }, {
     collection: 'device_details'
 });
 
-device_details_server.index({createdAt: 1},{expireAfterSeconds: 180,partialFilterExpression : {api_key: 'test'}});
+device_details_server.index({createdAt: 1},{expireAfterSeconds: 180,partialFilterExpression : { api_key: { $exists: true } }});
 //    expire_at: {type: Date, default: Date.now, expires: 3},
 //    partialFilterExpression: { api_key : String }
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
