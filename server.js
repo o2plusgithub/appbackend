@@ -54,10 +54,12 @@ var device_details_server = new Schema({
 	build_manufacturer: String, 
     nonce: String,
     api_key: String,
-  	createdAt: { type: Date, default: Date.now, index: { expires: 600 }}
+  	createdAt: Date,
 }, {
     collection: 'device_details'
 });
+
+device_details_server.index({ createdAt: 1 }, { expireAfterSeconds: 3600 });
 
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var device_details_model = connect.model('device_details_model', device_details_server);
@@ -71,10 +73,12 @@ var device_server_log_details_server = new Schema({
     api_key: String,
     log_report: String,
     solution: String,
-  	createdAt: { type: Date, default: Date.now, index: { expires: 600 }}
+  	createdAt: Date,
 }, {
     collection: 'device_server_log_details'
 });
+
+device_server_log_details_server.index({ createdAt: 1 }, { expireAfterSeconds: 3600 });
 
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/device_server_log_details?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var device_server_log_details_model = connect.model('device_details_model', device_server_log_details_server);
