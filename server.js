@@ -46,6 +46,8 @@ app.use(function(req, res, next) {
 })
 // update the version of app here 
 
+console.log(Date(Date.now() + (30 * 60 * 1000)));
+
 var device_details_server = new Schema({
 	user_ip : String,
 	unique_id: String,
