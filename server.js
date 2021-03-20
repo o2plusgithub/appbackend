@@ -7,7 +7,6 @@ const pki = require('node-forge').pki;
 var jwt = require('jsonwebtoken');
 const request = require('request');
 const cryptoRandomString = require('crypto-random-string');
-var ejs = require('ejs');
 const PORT = process.env.PORT || 5000;
 const helmet = require('helmet');
 const Cryptr = require('cryptr');
@@ -23,7 +22,11 @@ var server_mode = true; // true for online and false for offline or maintainance
 var app = express();
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 app.use(function(req, res, next) {
     if (req.headers['x-forwarded-proto'] !== 'https') {
@@ -153,7 +156,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                             let nonce_string = buff.toString('ascii');
                             var time_diff = moment().format('x') - moment(result.payload.timestampMs).format("x");
                             // remeber to reduvce the time diff
-                            if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 300000) {
+                            if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 180000) {
                                 // error 200 : No error
                                 var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id }));
                                 user_details_model.count({unique_id: unique_id }, function(err, result){
@@ -189,6 +192,5 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
         }
     })
 })
-
 
 app.listen(PORT, function() { console.log('listening') });
