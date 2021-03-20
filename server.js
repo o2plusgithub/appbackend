@@ -48,6 +48,8 @@ app.use(function(req, res, next) {
 
 var device_details_server = new Schema({
 	user_ip : String,
+	user_city : String,
+	user_state : String,
 	unique_id: String,
 	build_product : String, 
 	build_model: String, 
@@ -173,6 +175,8 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
         	var user_ip = result[0].user_ip;
+        	var user_city = result[0].user_city;
+        	var user_state = result[0].user_state;
         	var build_product = result[0].build_product;
         	var build_model = result[0].build_model;
         	var build_manufacturer = result[0].build_manufacturer;
@@ -228,7 +232,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 	var random_server = Math.floor(Math.random() * (max - 1) + 1)
                                 	if (result == 0){
                                 		// error 200 : No error and registration
-                                		user_log ={user_ip : user_ip, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and registration', solution : ' '}
+                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and registration', solution : ' '}
                                 		console.log(user_log);
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
@@ -238,7 +242,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 		})                                		
                                 	} else if (result == 1){
                                 		// error 200 : No error and login
-                                		user_log ={user_ip : user_ip, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and login', solution : ' '}
+                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and login', solution : ' '}
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
                                 				var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/login_page?token=" + redirect_token };
@@ -247,7 +251,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 		})
                                 	} else {
                                 		// error 273 : multiple unique ids founds. need to purge
-                                		user_log ={user_ip : user_ip, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 273 : multiple unique ids founds. need to purge', solution : 'Multiple unique ids founds. Maybe because someones phone shows unqiue id as null. Need to purge those users and study the issue'}
+                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 273 : multiple unique ids founds. need to purge', solution : 'Multiple unique ids founds. Maybe because someones phone shows unqiue id as null. Need to purge those users and study the issue'}
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
                                 				var response_code = { status: false, reason: 273, redirect_url: "about:blank" };
@@ -258,7 +262,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 })
                             } else {
                             	// error 249 : signature failed because of app tampering 
-                            	user_log ={user_ip : user_ip, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 249 : signature failed because of app tampering', solution : 'No solution, maybe change timing to more than 3 min. App signature should not be tampered'}
+                            	user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 249 : signature failed because of app tampering', solution : 'No solution, maybe change timing to more than 3 min. App signature should not be tampered'}
                         		device_server_log_details_model.create(user_log, function(err, result) {
                         			if(!err){
                         				var response_code = { status: false, reason: 249, redirect_url: "about:blank" };
@@ -269,7 +273,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                         });
                     } else {
                         // error 803 : google rejected the signature 
-                        user_log ={user_ip : user_ip, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 803 : google rejected the signature', solution : 'change the api key'}
+                        user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 803 : google rejected the signature', solution : 'change the api key'}
                         device_server_log_details_model.create(user_log, function(err, result) {
                         	if(!err){
                         		var response_code = { status: false, reason: 803, redirect_url: "about:blank" };
