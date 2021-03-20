@@ -14,6 +14,7 @@ const cryptr = new Cryptr('IPx3zITsOPot5Vq60Y6L');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 const expressip = require('express-ip');
+const ipInfo = require("ipinfo")
 
 
 // app version change here 
@@ -130,6 +131,9 @@ app.post('/check_update', urlencodedParser, function(req, res) {
 
 app.post('/token_load', urlencodedParser, function(req, res) {
     var user_ip_info = req.ipInfo;
+    ipInfo((err, cLoc) => {
+    	console.log(err || cLoc)
+    }
     console.log(user_ip_info)
     var user_ip = user_ip_info.ip;
     var user_country = user_ip_info.country;
