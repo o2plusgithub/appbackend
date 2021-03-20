@@ -27,6 +27,7 @@ var random_server = Math.floor(Math.random() * (server_max - 1) + 1);
 var safetynet_api_array = ["AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8"];
 var safetynet_api_max = 1;
 var safetynet_random_api = Math.floor(Math.random() * (safetynet_api_max - 1) + 1);
+console.log(safetynet_random_api);
 var safetynet_api = safetynet_api_array[0];
 
 
@@ -154,7 +155,6 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     		var user_proxy = ip_data.proxy;
     		var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
     		const api_key = safetynet_api;
-    		console.log(api_key);
     		var fingerprint = req.body.fingerprint;
     		var webview_version = req.body.webview_version;
     		var unique_id = req.body.unique_id;
