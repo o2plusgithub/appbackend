@@ -59,6 +59,7 @@ var device_details_server = new Schema({
 });
 
 
+
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var device_details_model = connect.model('device_details_model', device_details_server);
 
