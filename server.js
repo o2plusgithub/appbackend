@@ -87,7 +87,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var build_fingerprint = req.body.build_fingerprint;
     var build_hardware = req.body.build_hardware;
     var token_load = { nonce: nonce, api_key: api_key };
-    var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key, partialFilterExpression: { api_key : api_key } };
+    var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key, partialFilterExpression: { api_key : "1234" } };
     device_details_model.create(session_doc, function(err, result) {
         if (!err) {
             res.send(JSON.stringify(token_load))
