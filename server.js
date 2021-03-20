@@ -53,7 +53,14 @@ var device_details_server = new Schema({
 	build_model: String, 
 	build_manufacturer: String, 
     nonce: String,
-    api_key: String
+    api_key: String,
+    expireAt: {
+    	type: Date,
+      	/* Defaults 7 days from now */
+   		default: new Date(new Date().valueOf() + 604800000),
+      	/* Remove doc 60 seconds after specified date */
+      	expires: 60
+    }
 }, {
     collection: 'device_details'
 });
@@ -71,7 +78,14 @@ var device_server_log_details_server = new Schema({
 	build_manufacturer: String, 
     api_key: String,
     log_report: String,
-    solution: String
+    solution: String,
+    expireAt: {
+    	type: Date,
+      	/* Defaults 7 days from now */
+   		default: new Date(new Date().valueOf() + 604800000),
+      	/* Remove doc 60 seconds after specified date */
+      	expires: 60
+    }
 }, {
     collection: 'device_server_log_details'
 });
