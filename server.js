@@ -115,7 +115,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     //const api_key = "AIzaSyAorkPG4QrJ8S0HPYM9rpdktglqO5UHzM8";
     var signedAttestation = req.body.signedAttestation;
     var decode_token_temp = jwt.decode(signedAttestation);
-    var buff_temp = new Buffer(decode_token_temp.nonce, "base64");
+    var buff_temp = Buffer.from(decode_token_temp.nonce, "base64");
     var nonce_string_temp = buff_temp.toString('ascii');
     var search_id = { nonce: nonce_string_temp };
     device_details_model.find(search_id, function(err, result) {
@@ -159,7 +159,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                         });
 
                         TokenPromise.then(result => {
-                            let buff = new Buffer(result.payload.nonce, "base64");
+                            let buff = Buffer.from(result.payload.nonce, "base64");
                             let nonce_string = buff.toString('ascii');
                             var time_diff = moment().format('x') - moment(result.payload.timestampMs).format("x");
                             // remeber to reduvce the time diff
