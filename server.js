@@ -53,7 +53,7 @@ var device_details_server = new Schema({
     collection: 'device_details'
 });
 
-var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
+var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var device_details_model = connect.model('device_details_model', device_details_server);
 
 var user_details_server = new Schema({
@@ -75,7 +75,7 @@ var user_details_server = new Schema({
     collection: 'user_details'
 });
 
-var connect1 = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/userdetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false });
+var connect1 = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/userdetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var user_details_model = connect1.model('user_details_model', user_details_server);
 
 
@@ -166,7 +166,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                             if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 180000) {
                                 // error 200 : No error
                                 var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id }));
-                                user_details_model.count({unique_id: unique_id }, function(err, result){
+                                user_details_model.countDocuments({unique_id: unique_id }, function(err, result){
                                 	if (result == 0){
                                 		// error 200 : No error and registration
                                 		var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server1.herokuapp.com/registration_page?token=" + redirect_token };
