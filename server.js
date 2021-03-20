@@ -13,6 +13,7 @@ const Cryptr = require('cryptr');
 const cryptr = new Cryptr('IPx3zITsOPot5Vq60Y6L');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+const expressip = require('express-ip');
 
 
 // app version change here 
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 var app = express();
+app.use(expressip().getIpInfoMiddleware);
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
 app.use(
@@ -55,6 +57,24 @@ var device_details_server = new Schema({
 
 var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/devicedetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var device_details_model = connect.model('device_details_model', device_details_server);
+
+var device_server_log_details_server = new Schema({
+	user_ip : String,
+	user_city : String, 
+	unique_id: String,
+	build_product : String, 
+	build_model: String, 
+	build_manufacturer: String, 
+    api_key: String,
+    log_report: String,
+    solution: String
+    expire_at: {type: Date, default: Date.now, expires: 60}
+}, {
+    collection: 'device_server_log_details'
+});
+
+var connect = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/device_server_log_details?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
+var device_server_log_details_model = connect.model('device_details_model', device_server_log_details_server);
 
 var user_details_server = new Schema({
     username: String,
@@ -93,6 +113,10 @@ app.post('/check_update', urlencodedParser, function(req, res) {
 })
 
 app.post('/token_load', urlencodedParser, function(req, res) {
+    var user_ip_info = req.ipInfo;
+    var user_ip = user_ip_info.ip;
+    var user_country = user_ip_info.country;
+    var user_city = user_ip_info.city;
     var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
     const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
     var fingerprint = req.body.fingerprint;
@@ -100,8 +124,17 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var unique_id = req.body.unique_id;
     var build_fingerprint = req.body.build_fingerprint;
     var build_hardware = req.body.build_hardware;
-    var token_load = { server_status: server_mode, nonce: nonce, api_key: api_key };
-    var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key};
+    var build_hardware_array = build_hardware.split(":");
+    var build_product = build_hardware_array[0];
+    var build_model = build_hardware_array[1];
+    var build_manufacturer = build_hardware_array[2];
+    var vpn_status = user_ip_info.country == "IN";
+    var token_load = { server_status: server_mode, vpn_status : vpn_status, nonce: nonce, api_key: api_key };
+    var session_doc = {user_ip : user_ip, user_city : user_city, unique_id: unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , nonce: nonce, api_key: api_key};
+    
+    console.log(session_doc)
+    console.log(token_load)
+    
     device_details_model.create(session_doc, function(err, result) {
     	if (!err) {
     		res.send(JSON.stringify(token_load))
@@ -120,6 +153,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
             var unique_id = result[0].unique_id;
             var nonce = result[0].nonce;
             var api_key = result[0].api_key;
+            var build_hardware = result[0].build_hardware;
             var jwt_url = "https://www.googleapis.com/androidcheck/v1/attestations/verify?key=" + api_key;
             request.post({ url: jwt_url , form: { "signedAttestation": signedAttestation } }, function(err, httpResponse, body) {
                 if (err) {
@@ -176,21 +210,35 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 		res.send(JSON.stringify(response_code));
                                 	} else {
                                 		// error 273 : multiple unique ids founds. need to purge
-                                		var response_code = { status: false, reason: 273, redirect_url: "about:blank" };
-                        				res.send(JSON.stringify(response_code));
+                                		user_log ={unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 273 : multiple unique ids founds. need to purge', solution : 'Multiple unique ids founds. Maybe because someones phone shows unqiue id as null. Need to purge those users and study the issue'}
+                                		device_server_log_details_model.create(user_log, function(err, result) {
+                                			if(!err){
+                                				var response_code = { status: false, reason: 273, redirect_url: "about:blank" };
+                        						res.send(JSON.stringify(response_code));
+                  							}
+                        				})
                                 	}
                                 })
                             } else {
-
-                                // error 249 : signature failed because of app tampering 
-                                var response_code = { status: false, reason: 249, redirect_url: "about:blank" };
-                                res.send(JSON.stringify(response_code));
+                            	// error 249 : signature failed because of app tampering 
+                            	user_log ={unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 249 : signature failed because of app tampering', solution : 'No solution, maybe change timing to more than 3 min. App signature should not be tampered'}
+                        		device_server_log_details_model.create(user_log, function(err, result) {
+                        			if(!err){
+                        				var response_code = { status: false, reason: 249, redirect_url: "about:blank" };
+                        				res.send(JSON.stringify(response_code));
+                        			}
+                        		})
                             }
                         });
                     } else {
                         // error 803 : google rejected the signature 
-                        var response_code = { status: false, reason: 803, redirect_url: "about:blank" };
-                        res.send(JSON.stringify(response_code));
+                        user_log ={unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 803 : google rejected the signature', solution : 'change the api key'}
+                        device_server_log_details_model.create(user_log, function(err, result) {
+                        	if(!err){
+                        		var response_code = { status: false, reason: 803, redirect_url: "about:blank" };
+                        		res.send(JSON.stringify(response_code));
+                        	}
+                        })
                     }
                 }
             })
