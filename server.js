@@ -60,7 +60,6 @@ var device_details_model = connect.model('device_details_model', device_details_
 
 var device_server_log_details_server = new Schema({
 	user_ip : String,
-	user_city : String, 
 	unique_id: String,
 	build_product : String, 
 	build_model: String, 
@@ -117,7 +116,6 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     console.log(user_ip_info)
     var user_ip = user_ip_info.ip;
     var user_country = user_ip_info.country;
-    var user_city = user_ip_info.city;
     var nonce = cryptoRandomString({ length: 32, type: 'numeric' });
     const api_key = "AIzaSyAytfiIKLj5fec-V1smwDmZuM8gmZFWgm8";
     var fingerprint = req.body.fingerprint;
@@ -131,7 +129,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var build_manufacturer = build_hardware_array[2];
     var vpn_status = user_ip_info.country != "IN";
     var token_load = { server_status: server_mode, vpn_status : vpn_status, nonce: nonce, api_key: api_key };
-    var session_doc = {user_ip : user_ip, user_city : user_city, unique_id: unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , nonce: nonce, api_key: api_key};
+    var session_doc = {user_ip : user_ip, unique_id: unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , nonce: nonce, api_key: api_key};
     
     console.log(session_doc)
     console.log(token_load)
@@ -152,7 +150,6 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
         	var user_ip = result[0].user_ip;
-        	var user_city = result[0].user_city;
         	var build_product = result[0].build_product;
         	var build_model = result[0].build_model;
         	var build_manufacturer = result[0].build_manufacturer;
@@ -216,7 +213,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 		res.send(JSON.stringify(response_code));
                                 	} else {
                                 		// error 273 : multiple unique ids founds. need to purge
-                                		user_log ={user_ip : user_ip, user_city : user_city, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 273 : multiple unique ids founds. need to purge', solution : 'Multiple unique ids founds. Maybe because someones phone shows unqiue id as null. Need to purge those users and study the issue'}
+                                		user_log ={user_ip : user_ip, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 273 : multiple unique ids founds. need to purge', solution : 'Multiple unique ids founds. Maybe because someones phone shows unqiue id as null. Need to purge those users and study the issue'}
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
                                 				var response_code = { status: false, reason: 273, redirect_url: "about:blank" };
@@ -227,7 +224,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 })
                             } else {
                             	// error 249 : signature failed because of app tampering 
-                            	user_log ={user_ip : user_ip, user_city : user_city, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 249 : signature failed because of app tampering', solution : 'No solution, maybe change timing to more than 3 min. App signature should not be tampered'}
+                            	user_log ={user_ip : user_ip, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 249 : signature failed because of app tampering', solution : 'No solution, maybe change timing to more than 3 min. App signature should not be tampered'}
                         		device_server_log_details_model.create(user_log, function(err, result) {
                         			if(!err){
                         				var response_code = { status: false, reason: 249, redirect_url: "about:blank" };
@@ -238,7 +235,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                         });
                     } else {
                         // error 803 : google rejected the signature 
-                        user_log ={user_ip : user_ip, user_city : user_city, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 803 : google rejected the signature', solution : 'change the api key'}
+                        user_log ={user_ip : user_ip, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 803 : google rejected the signature', solution : 'change the api key'}
                         device_server_log_details_model.create(user_log, function(err, result) {
                         	if(!err){
                         		var response_code = { status: false, reason: 803, redirect_url: "about:blank" };
