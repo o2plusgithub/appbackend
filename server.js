@@ -133,7 +133,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     console.log(user_ip_info)
     var user_ip = user_ip_info.ip;
     var user_country = user_ip_info.country;
-    request({url: 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://proxycheck.io/v2/' + userip + '?vpn=1&asn=1',json: true}, function (error, response, body) {
+    request({url: 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://proxycheck.io/v2/' + userip + '?vpn=1&asn=1'),json: true}, function (error, response, body) {
     	if (!error && response.statusCode === 200) {
     		console.log(JSON.parse(body));
 		}
