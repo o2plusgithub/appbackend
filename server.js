@@ -55,7 +55,7 @@ var device_details_server = new Schema({
     nonce: String,
     api_key: String,
   	createdAt: {type: Date, default: Date.now },
-  	expire_at: {type: Date, default: new Date(Date.now() + (30 * 60 * 1000))},
+  	expire_at: {type: Date, default: Date(Date.now() + (30 * 60 * 1000))},
 }, {
     collection: 'device_details'
 });
@@ -73,7 +73,7 @@ var device_server_log_details_server = new Schema({
     log_report: String,
     solution: String,
   	createdAt: {type: Date, default: Date.now},
-  	expire_at: {type: Date, default: new Date(Date.now() + (30 * 60 * 1000))},
+  	expire_at: {type: Date, default: Date(Date.now() + (30 * 60 * 1000))},
 }, {
     collection: 'device_server_log_details'
 });
