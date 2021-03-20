@@ -90,7 +90,7 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     var session_doc = { unique_id: unique_id, nonce: nonce, api_key: api_key};
     	device_details_model.create(session_doc, function(err, result) {
     		if (!err) {
-    			    device_details_model.createIndex({ creationDate: 1 }, { expireAfterSeconds: 180, partialFilterExpression: { api_key: 'test' }})
+    			device_details_model.index({ creationDate: 1 }, { expireAfterSeconds: 180, partialFilterExpression: { api_key: 'test' }})
     			res.send(JSON.stringify(token_load))
     		}
     	})
