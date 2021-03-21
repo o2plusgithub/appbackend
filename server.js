@@ -71,7 +71,7 @@ var device_details_server = new Schema({
     expireAt: {
     	type: Date,
     	default: Date.now,
-    	index: { expires: '5m' },
+    	index: { expires: '2m' },
     }
 }, {
     collection: 'device_details'
@@ -96,7 +96,7 @@ var device_server_log_details_server = new Schema({
     expireAt: {
     	type: Date,
     	default: Date.now,
-    	index: { expires: '5m' },
+    	index: { expires: '1h' },
     }
     //expireAt: {
     //	type: Date,
