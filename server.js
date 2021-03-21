@@ -71,7 +71,7 @@ var device_details_server = new Schema({
     expireAt: {
     	type: Date,
     	default: Date.now,
-    	index: { expires: '2m' },
+    	index: { expires: '1m', partialFilterExpression : {nonce: "false"} },
     }
 }, {
     collection: 'device_details'
