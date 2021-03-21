@@ -191,6 +191,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     var buff_temp = Buffer.from(decode_token_temp.nonce, "base64");
     var nonce_string_temp = buff_temp.toString('ascii');
     var search_id = { nonce: nonce_string_temp };
+    console.log(decode_token_temp);
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
         	var user_ip = result[0].user_ip;
