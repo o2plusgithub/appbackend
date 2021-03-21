@@ -301,4 +301,10 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     })
 })
 
+// global error handler 
+app.use((err, req, res, next) => {
+     res.status(err.status || 500);
+     res.end();
+});
+
 app.listen(PORT, function() { console.log('listening') });
