@@ -131,6 +131,10 @@ var user_details_server = new Schema({
 var connect1 = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc8vpM0ego368z80271RCH@o2plusdatabase.vwl00.mongodb.net/userdetails?retryWrites=true&w=majority', { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true });
 var user_details_model = connect1.model('user_details_model', user_details_server);
 
+app.get('/', function(req, res) {
+	res.send('Server is Online');
+})
+
 
 app.post('/check_update', urlencodedParser, function(req, res) {
     var version = current_version;
