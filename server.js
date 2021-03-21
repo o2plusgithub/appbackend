@@ -71,7 +71,8 @@ var device_details_server = new Schema({
     expireAt: {
     	type: Date,
       	/* Defaults 7 days from now */
-   		default: new Date(new Date().valueOf() + 600000),
+      	default: Date.now,
+   		//default: new Date(new Date().valueOf() + 600000),
       	/* Remove doc 60 seconds after specified date */
       	expires: 60
     }
@@ -97,9 +98,7 @@ var device_server_log_details_server = new Schema({
     solution: String,
     expireAt: {
     	type: Date,
-      	/* Defaults 7 days from now */
-   		default: new Date(new Date().valueOf() + 3600000),
-      	/* Remove doc 60 seconds after specified date */
+   		default: Date.now,
       	expires: 60
     }
 }, {
@@ -172,7 +171,8 @@ app.post('/token_load', urlencodedParser, function(req, res) {
     		var build_manufacturer = build_hardware_array[2];
     		var vpn_status = ip_data.proxy != 'no';
     		var token_load = { server_status: server_mode, vpn_status : vpn_status, nonce: nonce, api_key: api_key };
-    		var session_doc = {user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id: unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , nonce: nonce, api_key: api_key};
+    		var device_details_expire = new Date(new Date().valueOf() + 600000);
+    		var session_doc = {user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id: unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , nonce: nonce, api_key: api_key, expireAt : device_details_expire};
     		device_details_model.create(session_doc, function(err, result) {
     			if (!err) {
     				res.send(JSON.stringify(token_load))
@@ -239,6 +239,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                             let buff = Buffer.from(result.payload.nonce, "base64");
                             let nonce_string = buff.toString('ascii');
                             var time_diff = moment().format('x') - moment(result.payload.timestampMs).format("x");
+                            var device_server_log_details_expire = new Date(new Date().valueOf() + 600000);
                             // remeber to reduvce the time diff = 3 min
                             if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 180000) {
                                 // error 200 : No error
@@ -246,7 +247,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 user_details_model.countDocuments({unique_id: unique_id }, function(err, result){
                                 	if (result == 0){
                                 		// error 200 : No error and registration
-                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and registration', solution : ' '}
+                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and registration', solution : ' ', expireAt : device_server_log_details_expire }
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
                                 				var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/registration_page?token=" + redirect_token };
@@ -255,7 +256,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 		})                                		
                                 	} else if (result == 1){
                                 		// error 200 : No error and login
-                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and login', solution : ' '}
+                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and login', solution : ' ', expireAt : device_server_log_details_expire }
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
                                 				var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/login_page?token=" + redirect_token };
@@ -264,7 +265,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 		})
                                 	} else {
                                 		// error 273 : multiple unique ids founds. need to purge
-                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 273 : multiple unique ids founds. need to purge', solution : 'Multiple unique ids founds. Maybe because someones phone shows unqiue id as null. Need to purge those users and study the issue'}
+                                		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 273 : multiple unique ids founds. need to purge', solution : 'Multiple unique ids founds. Maybe because someones phone shows unqiue id as null. Need to purge those users and study the issue', expireAt : device_server_log_details_expire }
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
                                 				var response_code = { status: false, reason: 273, redirect_url: "about:blank" };
@@ -275,7 +276,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 })
                             } else {
                             	// error 249 : signature failed because of app tampering 
-                            	user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 249 : signature failed because of app tampering', solution : 'No solution, maybe change timing to more than 3 min. App signature should not be tampered'}
+                            	user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 249 : signature failed because of app tampering', solution : 'No solution, maybe change timing to more than 3 min. App signature should not be tampered', expireAt : device_server_log_details_expire }
                         		device_server_log_details_model.create(user_log, function(err, result) {
                         			if(!err){
                         				var response_code = { status: false, reason: 249, redirect_url: "about:blank" };
@@ -286,7 +287,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                         });
                     } else {
                         // error 803 : google rejected the signature 
-                        user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 803 : google rejected the signature', solution : 'change the api key'}
+                        user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id,  build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 803 : google rejected the signature', solution : 'change the api key', expireAt : device_server_log_details_expire }
                         device_server_log_details_model.create(user_log, function(err, result) {
                         	if(!err){
                         		var response_code = { status: false, reason: 803, redirect_url: "about:blank" };
