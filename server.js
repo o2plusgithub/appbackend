@@ -143,7 +143,6 @@ app.post('/check_update', urlencodedParser, function(req, res) {
 
 app.post('/token_load', urlencodedParser, function(req, res) {
     var user_ip_info = req.ipInfo;
-    console.log(user_ip_info)
     var user_ip = user_ip_info.ip;
     request('https://api.allorigins.win/get?url=' + encodeURIComponent('https://proxycheck.io/v2/' + user_ip + '?vpn=1&asn=1'), function (error, response, body) {
     	if (!error && response.statusCode === 200) {
@@ -242,8 +241,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and registration', solution : ' '}
                                 		device_server_log_details_model.create(user_log, function(err, result) {
                                 			if(!err){
-                                				var response_code = { status: true, reason: 200, redirect_url: "https://www.whatsmyua.info/"};
-                                				//var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/registration_page?token=" + redirect_token };
+                                				var response_code = { status: true, reason: 200, redirect_url: "https://o2plususerinterface-server" + random_server + ".herokuapp.com/registration_page?token=" + redirect_token };
                                 				res.send(JSON.stringify(response_code));
                                 			}
                                 		})                                		
