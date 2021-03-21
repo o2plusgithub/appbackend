@@ -14,6 +14,8 @@ const cryptr = new Cryptr('IPx3zITsOPot5Vq60Y6L');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 const expressip = require('express-ip');
+var useragent = require('express-useragent');
+
 
 
 // app version change here 
@@ -38,6 +40,7 @@ if (process.env.NODE_ENV === "production") {
 
 var app = express();
 app.use(expressip().getIpInfoMiddleware);
+app.use(useragent.express());
 // OSC = O2Plus server cookie
 // helmet is needed for hsts => very important to block attacks 
 app.use(
@@ -142,6 +145,7 @@ app.post('/check_update', urlencodedParser, function(req, res) {
 })
 
 app.post('/token_load', urlencodedParser, function(req, res) {
+	console.log(req.useragent);
     var user_ip_info = req.ipInfo;
     var user_ip = user_ip_info.ip;
     request('https://api.allorigins.win/get?url=' + encodeURIComponent('https://proxycheck.io/v2/' + user_ip + '?vpn=1&asn=1'), function (error, response, body) {
