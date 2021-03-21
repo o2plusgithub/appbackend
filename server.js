@@ -132,8 +132,7 @@ var connect1 = mongoose.createConnection('mongodb+srv://C6hivgPRCjxKGF9f:yW3c3fc
 var user_details_model = connect1.model('user_details_model', user_details_server);
 
 app.get('/', function(req, res) {
-	res.send(wert);
-	//res.send('Server is Online');
+	res.send('Server is Online');
 })
 
 
