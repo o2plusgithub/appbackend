@@ -71,7 +71,7 @@ var device_details_server = new Schema({
     expireAt: {
     	type: Date,
     	default: Date.now,
-    	index: { expires: '1m', partialFilterExpression : {nonce: "false"} },
+    	index: { expires: '1m'} // , partialFilterExpression : {nonce: "false"} }, // add index to activate TTL
     }
 }, {
     collection: 'device_details'
