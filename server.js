@@ -245,7 +245,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                             // remeber to reduvce the time diff = 3 min
                             if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 180000) {
                                 // error 200 : No error
-                                var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id, user_ip : user_ip }));
+                                var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id, user_ip : user_ip , user_city : user_city, user_state : user_state , build_product : build_product, build_model : build_model , build_manufacturer : build_manufacturer}));
                                 user_details_model.find({unique_id: unique_id }, function(err, result){
                                 	var number_users = result.length; 
                                 	if (number_users == 0){
