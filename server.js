@@ -152,7 +152,6 @@ app.post('/check_update', urlencodedParser, function(req, res) {
 })
 
 app.post('/token_load', urlencodedParser, function(req, res) {
-	console.log(req.useragent);
     var user_ip_info = req.ipInfo;
     var user_ip = user_ip_info.ip;
     request('https://api.allorigins.win/get?url=' + encodeURIComponent('https://proxycheck.io/v2/' + user_ip + '?vpn=1&asn=1'), function (error, response, body) {
@@ -191,7 +190,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
     var buff_temp = Buffer.from(decode_token_temp.nonce, "base64");
     var nonce_string_temp = buff_temp.toString('ascii');
     var search_id = { nonce: nonce_string_temp };
-    console.log(signedAttestation);
+    console.log(signedAttestation.apkCertificateDigestSha256);
     device_details_model.find(search_id, function(err, result) {
         if (!err) {
         	var user_ip = result[0].user_ip;
@@ -247,8 +246,9 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                             if (result.signature && result.certificate.commonName == "attest.android.com" && nonce_string == nonce && time_diff <= 180000) {
                                 // error 200 : No error
                                 var redirect_token = cryptr.encrypt(JSON.stringify({ timestamp: moment().format('x'), unique_id: unique_id, user_ip : user_ip }));
-                                user_details_model.countDocuments({unique_id: unique_id }, function(err, result){
-                                	if (result == 0){
+                                user_details_model.find({unique_id: unique_id }, function(err, result){
+                                	var number_users = result.length; 
+                                	if (number_users == 0){
                                 		// error 200 : No error and registration
                                 		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and registration', solution : ' '}
                                 		device_server_log_details_model.create(user_log, function(err, result) {
@@ -257,7 +257,7 @@ app.post('/device_auth', urlencodedParser, function(req, res) {
                                 				res.send(JSON.stringify(response_code));
                                 			}
                                 		})                                		
-                                	} else if (result == 1){
+                                	} else if (number_users == 1){
                                 		// error 200 : No error and login
                                 		user_log ={user_ip : user_ip, user_city : user_city, user_state : user_state, unique_id : unique_id, build_product : build_product, build_model : build_model, build_manufacturer : build_manufacturer , api_key : api_key, log_report : 'error 200 : No error and login', solution : ' '}
                                 		device_server_log_details_model.create(user_log, function(err, result) {
