@@ -123,10 +123,11 @@ var user_details_server = new Schema({
     video_watch_hour: Number,
     logincount: Number,
     lec_quality: String,
+    points: Number,
+    rank: Number,
     like: { type: [String], default: undefined },
     dislike: { type: [String], default: undefined },
-    points: Number,
-    rank: Number
+    block_reason: String
 }, {
     collection: 'user_details'
 });
